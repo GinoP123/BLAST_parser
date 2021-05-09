@@ -1,12 +1,9 @@
-import pandas as pd
+import Excel_Writers as Excel_Writers
 
 alignment_line = "Alignments:\n"
 strings_to_find = ["Sequence ID: ", "Expect:", "Identities:"]
 substrings = ["Identities:", "Positives:", "Gaps:"]
-df_columns = ["name", "Genome length",	"E-Value (expect)",	"Percent identities", "Percent positives", "Accession number/Sequence ID"]
 
-phage_data = {}
-df_dictionary = {column: [] for column in df_columns}
 
 def find_text(String, char1, char2):
 	return String[String.index(char1)+1: String.index(char2)]
@@ -25,85 +22,68 @@ def parse_line(String, line_type):
 	return data
 
 
-with open(f"{input('BLAST File Name: ')}") as infile:
-	data = infile.readlines()
+def parse(filename, data, write=True, path=None):
+	if path is None and filename:
+		path = f"{filename}.xlsx"
 
-new_list = []
-found_alignment_section = False
-for line in data:
-	if line == alignment_line:
-		found_alignment_section = True
+	phage_data = {}
 
-	if ">" in line and found_alignment_section:
-		if line.index(">") != 0:
-			lines = line.split(">")	
-			assert len(lines) == 2		
-			lines[-1] = ">" + lines[-1]
-			new_list.extend(lines)
-			continue
-	new_list.append(line)
-data = new_list
+	new_list = []
+	found_alignment_section = False
+	for line in data:
+		if line == alignment_line:
+			found_alignment_section = True
 
-
-names = []
-for line in data:
-	if ">" in line:
-		names.append(find_text(line, "[", "]"))
-		if names[-1] not in phage_data:
-			phage_data[names[-1]] = []
-		else:
-			names.pop()
-	elif names:
-		if len(phage_data[names[-1]]) == 0:
-			if strings_to_find[0] in line:
-				phage_data[names[-1]].extend(parse_line(line, 0))
-
-		elif strings_to_find[len(phage_data[names[-1]])] in line:
-			info = parse_line(line, len(phage_data[names[-1]]))
-			for name in names:
-				phage_data[name].extend(info)
-
-			if len(phage_data[names[-1]]) == 4:
-				names = []
+		if ">" in line and found_alignment_section:
+			if line.index(">") != 0:
+				lines = line.split(">")	
+				assert len(lines) == 2		
+				lines[-1] = ">" + lines[-1]
+				new_list.extend(lines)
+				continue
+		new_list.append(line)
+	data = new_list
 
 
-for name in phage_data:
-	assert len(phage_data[name]) == 4
+	names = []
+	for line in data:
+		if ">" in line:
+			names.append(find_text(line, "[", "]"))
+			if names[-1] not in phage_data:
+				phage_data[names[-1]] = []
+			else:
+				names.pop()
+		elif names:
+			if len(phage_data[names[-1]]) == 0:
+				if strings_to_find[0] in line:
+					phage_data[names[-1]].extend(parse_line(line, 0))
 
-names = []
-lengths = []
+			elif strings_to_find[len(phage_data[names[-1]])] in line:
+				info = parse_line(line, len(phage_data[names[-1]]))
+				for name in names:
+					phage_data[name].extend(info)
 
-with open(f"names_lengths.txt") as infile_names_lengths:
-	lines = infile_names_lengths.readlines()
+				if len(phage_data[names[-1]]) == 4:
+					names = []
 
-	for line in lines:
-		if not line.strip():
-			continue
-
-		name, length = line.strip().split(", ")
-		names.append(name)
-		lengths.append(length)
-
-		df_dictionary["name"].append(name)
-		df_dictionary["Genome length"].append(length)
-		for column in df_columns[2:]:
-			df_dictionary[column].append("")
-
-	names = [name.strip() for name in names]
-
-
-with open(f"summary.txt", "w") as outfile:
-	outfile.write("Name, Accession, E-Value, % ID, % Positives\n")
 	for name in phage_data:
-		outfile.write(name + ", " + ", ".join(phage_data[name]) + "\n")
+		assert len(phage_data[name]) == 4
+
+	if write:
+		single_writer = Excel_Writers.Excel_Writer(path)
+		single_writer.write(filename, phage_data)
+
+	return phage_data
 
 
-for i, name in enumerate(names):
-	if name in phage_data:
-		df_dictionary["Accession number/Sequence ID"][i] = phage_data[name][0]
-		df_dictionary["E-Value (expect)"][i] = phage_data[name][1]
-		df_dictionary["Percent identities"][i] = phage_data[name][2]
-		df_dictionary["Percent positives"][i] = phage_data[name][3]
+def parse_batch(filenames, content_lists, path="Batch.xlsx"):
+	# return " ".join(filenames)
 
-df = pd.DataFrame(df_dictionary)
-df.to_excel("BLAST Hits.xlsx", index=False)
+	batch_phage_data = {}
+
+	for filename, content in zip(filenames, content_lists):
+		batch_phage_data[filename] = parse(None, content, False)
+
+	batch_writer = Excel_Writers.Excel_Batch_Writer(path)
+	batch_writer.write(filenames, batch_phage_data)
+
