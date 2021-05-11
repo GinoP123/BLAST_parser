@@ -10,10 +10,10 @@ Clostridium phage phiCPV4, 17972
 Clostridium phage phiCP7R, 18397
 Halocynthia phage JM-2012, 167292
 Pseudomonas phage OBP, 284757
-Vibriophage Aphrodite1, 237722
+Vibrio phage Aphrodite1, 237722
 Pseudomonas phage EL, 211215
 Erwinia phage vB_EamM_Joad, 235374
-Vibriophage BONAISHI, 288967
+Vibrio phage BONAISHI, 288967
 Erwinia phage vB_EamM_Phobos, 229501
 Erwinia phage vB_EamM_EarlPhillipIV, 223935
 Cronobacter phage CR5, 223989
