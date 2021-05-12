@@ -39,8 +39,8 @@ Pseudomonas virus phiKZ, 280334
 Pseudomonas phage PhiPA3, 309208
 Ralstonia phage RSL2, 223932
 Ralstonia phage RSF1, 222888
-Ralstonia phage RP12 DNA, 279845
-Ralstonia phage RP31 DNA, 276958
+Ralstonia phage RP12, 279845
+Ralstonia phage RP31, 276958
 Bacillus virus IEBH, 53104
 Bacillus virus 250, 56505
 Clostridium phage phiCD211, 131704
@@ -78,7 +78,6 @@ Geobacillus phage GBK2, 39078
 Bacillus virus G, 497513
 Bacillus phage G, 497513
 Geobacillus virus E3, 141298
-Clostridium phage c-st, 185683
 Clostridium phage c-st, 185683
 Brevibacillus phage Sundance, 134270
 Bacillus phage vB_BanS-Tsamsa, 168876
