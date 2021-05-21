@@ -18,7 +18,7 @@ with open(f"names_lengths.txt") as infile_names_lengths:
 		phage_names.append(name)
 		phage_lengths.append(length)
 
-assert len(phage_names) == 95
+assert len(phage_names) == 100
 
 
 def format_columns(writer, sheet_name, df):
@@ -59,7 +59,7 @@ class Excel_Writer:
 		df = pd.DataFrame(df_dictionary)
 		df.to_excel(self.path, index=False)
 
-		assert len(df) == 95
+		assert len(df) == 100
 		assert os.path.exists(self.path)
 
 
